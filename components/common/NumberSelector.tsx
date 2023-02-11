@@ -10,12 +10,12 @@ export const NumberSelector: React.FC<{
     <div className="my-4 flex w-[240px] flex-col items-center">
       <div className="mb-4 text-center text-xs">{text}</div>
       <div className="flex justify-around align-top">
-        <div className="my-auto w-[140px] text-center text-xl font-bold text-black-1">
+        <div className="text-black-1 my-auto w-[140px] text-center text-xl font-bold">
           {value}
         </div>
         {canEdit && <UpDownButtons />}
       </div>
-      {canEdit && <div className="mb-4 h-[2px] w-full bg-black-1"></div>}
+      {canEdit && <div className="bg-black-1 mb-4 h-[2px] w-full"></div>}
     </div>
   );
 };
@@ -24,7 +24,7 @@ export default NumberSelector;
 const UpDownButtons = () => {
   const style = {
     width: "14px",
-    textAlign: "center",
+    TextAlign: "center",
     fontSize: "9px",
     color: "#939292",
     borderColor: "#939292",

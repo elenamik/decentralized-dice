@@ -1,14 +1,5 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## TODOs:
-- [ ] check that request fullfills
-- [ ] read multi var from request (new FEN, valid)
-  - [ ] set TO MOVE and FEN, record moves
-- [ ] program check mate + win
-- [ ] clean up frontend styling
-- [ ] allow to view past moves?
-
-
 ## Getting Started
 
 First, run the development server:
