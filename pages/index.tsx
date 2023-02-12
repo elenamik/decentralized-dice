@@ -1,10 +1,10 @@
-import { Button, Input, Spin, Typography } from "antd";
+import { Button, Input, Spin } from "antd";
 import React from "react";
 import { useAccount, useContract, useContractEvent, useSigner } from "wagmi";
 
 import { useWeb3LoadingContext } from "contexts/web3Loading";
 import { diceGame } from "constants/game";
-import { PlayDiceABI } from "contracts/PlayDiceABI";
+import PlayDiceABI from "contracts/PlayDiceABI.json";
 import { Game } from "types/game";
 import { useMutation } from "react-query";
 
