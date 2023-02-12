@@ -1,41 +1,86 @@
-import { Button, Input } from "antd";
+import { Button, Input, Spin, Typography } from "antd";
 import React from "react";
-import { useContractEvent } from "wagmi";
+import { useAccount, useContract, useContractEvent, useSigner } from "wagmi";
+
 import { useWeb3LoadingContext } from "contexts/web3Loading";
 import { diceGame } from "constants/game";
 import { PlayDiceABI } from "contracts/PlayDiceABI";
+import { Game } from "types/game";
+import { useMutation } from "react-query";
 
 export default function Home() {
-  const { setIsWeb3Loading } = useWeb3LoadingContext();
+  const { isWeb3Loading, setIsWeb3Loading } = useWeb3LoadingContext();
+  const { isConnected } = useAccount();
+  const [games, setGames] = React.useState<Game[]>([]);
+  const { data: signer } = useSigner();
+  const [player2Input, setPlayer2Input] = React.useState<string>(
+    "0xF207a7340103fd098908bc74Eb8174D745BAA3a6"
+  ); // hardcoded to one of my test accounts
 
   useContractEvent({
-    address: diceGame?.address,
+    address: diceGame.address,
     abi: PlayDiceABI,
     eventName: "Game",
     // @ts-ignore
-    listener(requestId: string, isValid: boolean) {
-      console.log("MOVE MADE", requestId, isValid);
+    listener(win: string, loss: string) {
+      setIsWeb3Loading(false);
+      if (games.length > 4) {
+        setGames([{ win, loss }, ...games.slice(0, -1)]);
+      }
+      setGames([{ win, loss }, ...games]);
     },
   });
-  return <div>hi</div>;
 
-  // if (!game || !game.gameAddress || game.gameAddress === "") {
-  //   return (
-  //     <div className="">
-  //       <Input.Group>
-  //         <Input
-  //           addonBefore="Game Address"
-  //           placeholder="Input contract address of game"
-  //           defaultValue={game?.gameAddress}
-  //           style={{ width: "40%" }}
-  //           onChange={(e) => setGameAddressInput(e.target.value)}
-  //         />
-  //         <Button onClick={handleSubmit}>Submit</Button>
-  //       </Input.Group>
-  //     </div>
-  //   );
-  // } else if (FEN === "") {
-  //   return <SetupGame />;
-  // }
-  // return <Game />;
+  const diceContract = useContract({
+    address: diceGame.address,
+    abi: PlayDiceABI,
+    signerOrProvider: signer,
+    watch: true,
+  });
+
+  const { mutate, isLoading } = useMutation({
+    mutationKey: `move${Date.now()}`,
+    mutationFn: (args: { player2: string }) => {
+      return diceContract!.playDice(args.player2);
+    },
+    onSuccess: (data) => {
+      console.log("Success", data);
+      setIsWeb3Loading(true);
+      setPlayer2Input("");
+    },
+    onError: (error) => {
+      console.log("Error", error);
+    },
+  });
+
+  const handlePlay = async () => {
+    mutate({ player2: player2Input });
+  };
+
+  const canPlay = isConnected && !isWeb3Loading;
+
+  return (
+    <div className="">
+      <Input.Group>
+        {!isConnected && <Typography>Please connect wallet to play</Typography>}
+        <Button disabled={!canPlay} onClick={handlePlay}>
+          Play Dice
+        </Button>
+        <Input
+          disabled={!canPlay}
+          addonBefore="Opponent"
+          value={player2Input}
+          onChange={(e) => setPlayer2Input(e.target.value)}
+        />
+      </Input.Group>
+      <div>
+        {isWeb3Loading && <Spin />}
+        {games.map((game, index) => (
+          <div key={index}>
+            Win: {game.win} Loss: {game.loss}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
