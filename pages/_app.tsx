@@ -4,10 +4,12 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { WagmiConfig, createClient } from "wagmi";
 import { configureChains, goerli } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
-import "@rainbow-me/rainbowkit/styles.css";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import {
+  ConnectKitProvider,
+  ConnectKitButton,
+  getDefaultClient,
+} from "connectkit";
 
-import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import {
   useWeb3LoadingContext,
   Web3LoadingProvider,
@@ -16,20 +18,15 @@ import {
 export default function App({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();
   const chains = [goerli];
-  const { provider, webSocketProvider } = configureChains(chains, [
-    publicProvider(),
-  ]);
-  const { connectors } = getDefaultWallets({
-    appName: "Decentralized Dice",
-    chains,
-  });
+  const { provider } = configureChains(chains, [publicProvider()]);
 
-  const client = createClient({
-    autoConnect: true,
-    provider: provider,
-    connectors: connectors,
-    webSocketProvider,
-  });
+  const client = createClient(
+    getDefaultClient({
+      appName: "Decentralized Dice",
+      provider,
+      chains,
+    })
+  );
 
   const { isWeb3Loading } = useWeb3LoadingContext();
 
@@ -51,12 +48,12 @@ export default function App({ Component, pageProps }: AppProps) {
       <main>
         <QueryClientProvider client={queryClient}>
           <WagmiConfig client={client}>
-            <RainbowKitProvider chains={chains}>
-              <Web3LoadingProvider value={{ isWeb3Loading }}>
-                <ConnectButton />
+            <Web3LoadingProvider value={{ isWeb3Loading }}>
+              <ConnectKitProvider>
+                <ConnectKitButton />
                 <Component {...pageProps} />
-              </Web3LoadingProvider>
-            </RainbowKitProvider>
+              </ConnectKitProvider>
+            </Web3LoadingProvider>
           </WagmiConfig>
         </QueryClientProvider>
       </main>

@@ -35,7 +35,6 @@ export default function Home() {
     address: diceGame.address,
     abi: PlayDiceABI,
     signerOrProvider: signer,
-    watch: true,
   });
 
   const { mutate, isLoading } = useMutation({
@@ -61,18 +60,16 @@ export default function Home() {
 
   return (
     <div className="">
-      <Input.Group>
-        {!isConnected && <Typography>Please connect wallet to play</Typography>}
-        <Button disabled={!canPlay} onClick={handlePlay}>
-          Play Dice
-        </Button>
-        <Input
-          disabled={!canPlay}
-          addonBefore="Opponent"
-          value={player2Input}
-          onChange={(e) => setPlayer2Input(e.target.value)}
-        />
-      </Input.Group>
+      <Button disabled={!canPlay} onClick={handlePlay}>
+        Play Dice
+      </Button>
+      <Input
+        disabled={!canPlay}
+        addonBefore="Opponent"
+        value={player2Input}
+        onChange={(e) => setPlayer2Input(e.target.value)}
+      />
+
       <div>
         {isWeb3Loading && <Spin />}
         {games.map((game, index) => (
