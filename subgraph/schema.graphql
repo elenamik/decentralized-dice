@@ -8,6 +8,7 @@ type Game @entity(immutable: true) {
 }
 
 type Player @entity(immutable: false) {
-  id: Bytes! # address
-  address: Bytes! # address
+  id: Bytes! # player's eth address
+  wins: Int!
+  losses: Int!
 }
