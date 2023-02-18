@@ -1,5 +1,5 @@
-import { Game as GameEvent } from "../../subgraph-files/generated/PlayDice/PlayDice";
-import { Game } from "../../subgraph-files/generated/schema";
+import { Game as GameEvent } from "../generated/PlayDice/PlayDice";
+import { Game } from "../generated/schema";
 
 export function handleGame(event: GameEvent): void {
   let entity = new Game(
