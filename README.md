@@ -11,7 +11,7 @@ yarn dev
 ```
 
 ## Deploy graph
-1. install graph-cli globally, `graph-auth` with project token, open project in subgraph studio
+1. install graph-cli globally, open project in subgraph studio, `graph-auth` with project token
 2. `cd subgraph`
 3. `graph codegen` -> creates `generated` folder with generated AssemblyScript types
 4. `graph build` -> creates `build` folder with compiled subgraph in WebAssembly
