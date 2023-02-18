@@ -17,7 +17,9 @@
     "next": "13.1.1",
     "react": "18.2.0",
     "react-query": "^3.39.2",
-    "wagmi": "^0.10.10"
+    "wagmi": "^0.10.10",
+    "@graphprotocol/graph-ts": "0.29.1"
+
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",
