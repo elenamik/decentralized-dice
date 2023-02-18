@@ -1,111 +1,79 @@
-import { ReloadOutlined } from "@ant-design/icons";
-import { Button, Spin, Table, Typography } from "antd";
-import React, { useEffect } from "react";
-import { Game } from "../types/game";
+import { Spin, Table, Typography } from "antd";
+import React from "react";
 import { useBlockNumber } from "wagmi";
 import { useQuery } from "react-query";
 import { gql } from "@apollo/client";
 import { graphQLClient } from "../constants/graph";
+import { Player } from "../types/player";
 
-const GET_GAMES_GQL = `
-  query getGames  {
-    games (first:100, orderBy: blockNumber, orderDirection: desc) {
+const GET_WINNERS_GQL = `
+  query getWinners  {
+    players (first:100, orderBy: wins, orderDirection: desc) {
       id
-      win
-      loss
-      blockTimestamp
-      blockNumber
+      wins
+      losses
     }
   }
 `;
 
-export const truncateAddress = (address: string) => {
-  return `${address.slice(0, 6)}...${address.slice(-4)}`;
-};
+export const Leaderboards: React.FC = () => {
+  const { data: blockNumber } = useBlockNumber({
+    watch: true,
+  });
 
-export const RecentGames: React.FC = () => {
-  const { data, isLoading, refetch, isFetching } = useQuery<{
+  const { data, isLoading } = useQuery<{
     data: {
-      games: Game[];
+      players: Player[];
     };
   }>({
     onError: (error) => console.log(error),
+    queryKey: ["players", blockNumber],
     queryFn: () =>
       graphQLClient.query({
         query: gql`
-          ${GET_GAMES_GQL}
+          ${GET_WINNERS_GQL}
         `,
       }),
   });
 
-  console.log("isFetching", isFetching);
-
-  const { blocknumber } = useBlockNumber({
-    watch: true,
-  });
-
-  useEffect(() => {
-    refetch();
-  }, [blocknumber]);
-
-  const makeRows = (data?: Game[]) => {
+  const makeRows = (data?: Player[]) => {
     if (!data || data.length === 0) return [];
-    return data.map((game) => {
-      const date = new Date(parseInt(game.blockTimestamp) * 1000);
+    return data.map((player) => {
       return {
-        key: game.id,
-        win: truncateAddress(game.win),
-        loss: truncateAddress(game.loss),
-        // @ts-ignore
-        timestamp: date.toLocaleString(),
-        number: game.blockNumber,
+        key: player.id,
+        address: player.id,
+        wins: player.wins,
+        losses: player.losses,
       };
     });
   };
 
   const columns = [
     {
-      title: "Timestamp",
-      dataIndex: "timestamp",
-      key: "timestamp",
-      width: 20,
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
     },
     {
-      title: "Block Number",
-      dataIndex: "number",
-      key: "number",
-      width: 10,
+      title: "Total wins",
+      dataIndex: "wins",
+      key: "wins",
     },
 
     {
-      title: "Win",
-      dataIndex: "win",
-      key: "win",
-      width: 10,
-    },
-    {
-      title: "Loss",
-      dataIndex: "loss",
-      key: "loss",
-      width: 10,
+      title: "Total losses",
+      dataIndex: "losses",
+      key: "losses",
     },
   ];
 
-  const rows = makeRows(data?.data.games);
+  const rows = makeRows(data?.data.players);
 
   return (
     <div>
       <Typography.Title level={3}>
-        Recent Games
+        Leaderboards
         {isLoading && <Spin />}
-        <Button
-          disabled={isLoading}
-          onClick={() => {
-            console.log("refetching");
-            refetch();
-          }}
-          icon={<ReloadOutlined />}
-        ></Button>
       </Typography.Title>
 
       <Table dataSource={rows} columns={columns} />
@@ -113,4 +81,4 @@ export const RecentGames: React.FC = () => {
   );
 };
 
-export default RecentGames;
+export default Leaderboards;

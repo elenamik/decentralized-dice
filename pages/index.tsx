@@ -1,4 +1,4 @@
-import { Alert, Button, Input, Spin } from "antd";
+import { Alert, Button, Input } from "antd";
 import React, { useEffect } from "react";
 import { useAccount, useContract, useContractEvent, useSigner } from "wagmi";
 
@@ -9,6 +9,7 @@ import { Game } from "../types/game";
 import { useMutation } from "react-query";
 import RecentGames from "../components/RecentGames";
 import { PlayCircleOutlined } from "@ant-design/icons";
+import Leaderboards from "../components/Leaderboards";
 
 export default function Home() {
   const { isWeb3Loading, setIsWeb3Loading } = useWeb3LoadingContext();
@@ -101,6 +102,7 @@ export default function Home() {
           addonBefore="Opponent"
           value={player2Input}
           onChange={(e) => setPlayer2Input(e.target.value)}
+          placeholder="Paster your opponent's address"
         />
         <Button
           type="primary"
@@ -115,6 +117,7 @@ export default function Home() {
       </div>
       <GameResult />
       <RecentGames />
+      <Leaderboards />
     </div>
   );
 }
