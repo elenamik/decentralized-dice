@@ -1,21 +1,24 @@
-import { Button, Input, Spin } from "antd";
-import React from "react";
+import { Alert, Button, Input, Spin } from "antd";
+import React, { useEffect } from "react";
 import { useAccount, useContract, useContractEvent, useSigner } from "wagmi";
 
-import { useWeb3LoadingContext } from "contexts/web3Loading";
-import { diceGame } from "constants/game";
-import PlayDiceABI from "contracts/PlayDiceABI.json";
-import { Game } from "types/game";
+import { useWeb3LoadingContext } from "../contexts/web3Loading";
+import { diceGame } from "../constants/game";
+import PlayDiceABI from "../contracts/PlayDiceABI.json";
+import { Game } from "../types/game";
 import { useMutation } from "react-query";
+import Subgraph from "../components/Subgraph";
+import { PlayCircleOutlined } from "@ant-design/icons";
 
 export default function Home() {
   const { isWeb3Loading, setIsWeb3Loading } = useWeb3LoadingContext();
-  const { isConnected } = useAccount();
-  const [games, setGames] = React.useState<Game[]>([]);
+  const { isConnected, address } = useAccount();
   const { data: signer } = useSigner();
   const [player2Input, setPlayer2Input] = React.useState<string>(
     "0xF207a7340103fd098908bc74Eb8174D745BAA3a6"
   ); // hardcoded to one of my test accounts
+  const [gameResult, setGameResult] = React.useState<string | undefined>();
+  const [canPlay, setCanPlay] = React.useState(false);
 
   useContractEvent({
     address: diceGame.address,
@@ -23,11 +26,11 @@ export default function Home() {
     eventName: "Game",
     // @ts-ignore
     listener(win: string, loss: string) {
-      setIsWeb3Loading(false);
-      if (games.length > 4) {
-        setGames([{ win, loss }, ...games.slice(0, -1)]);
+      // filter only for your game result
+      if (win === address || loss === address) {
+        setIsWeb3Loading(false);
+        setGameResult(win);
       }
-      setGames([{ win, loss }, ...games]);
     },
   });
 
@@ -37,7 +40,7 @@ export default function Home() {
     signerOrProvider: signer,
   });
 
-  const { mutate, isLoading } = useMutation({
+  const { mutate } = useMutation({
     mutationKey: `move${Date.now()}`,
     mutationFn: (args: { player2: string }) => {
       return diceContract!.playDice(args.player2);
@@ -45,39 +48,73 @@ export default function Home() {
     onSuccess: (data) => {
       console.log("Success", data);
       setIsWeb3Loading(true);
-      setPlayer2Input("");
+      setGameResult(undefined);
     },
     onError: (error) => {
       console.log("Error", error);
     },
   });
 
-  const handlePlay = async () => {
+  const handlePlay = () => {
     mutate({ player2: player2Input });
   };
 
-  const canPlay = isConnected && !isWeb3Loading;
+  useEffect(() => {
+    if (isConnected && !isWeb3Loading) setCanPlay(true);
+    else setCanPlay(false);
+  }, [isConnected, isWeb3Loading]);
+
+  const GameResult = () => {
+    if (gameResult === undefined) return null;
+    else if (gameResult === address) {
+      return (
+        <Alert
+          message="You won!"
+          description={`Congrats, you beat ${player2Input}`}
+          type="success"
+          showIcon
+          closable
+          onClose={() => setGameResult(undefined)}
+        />
+      );
+    } else {
+      return (
+        <Alert
+          message="You lost!"
+          style={{ width: "40%" }}
+          description={`Sorry, ${gameResult} won`}
+          type="error"
+          showIcon
+          closable
+          onClose={() => setGameResult(undefined)}
+        />
+      );
+    }
+  };
 
   return (
     <div className="">
-      <Button disabled={!canPlay} onClick={handlePlay}>
-        Play Dice
-      </Button>
-      <Input
-        disabled={!canPlay}
-        addonBefore="Opponent"
-        value={player2Input}
-        onChange={(e) => setPlayer2Input(e.target.value)}
-      />
-
-      <div>
-        {isWeb3Loading && <Spin />}
-        {games.map((game, index) => (
-          <div key={index}>
-            Win: {game.win} Loss: {game.loss}
-          </div>
-        ))}
+      <div className="flex flex-row">
+        <Input
+          style={{ width: "40%" }}
+          disabled={!canPlay}
+          addonBefore="Opponent"
+          value={player2Input}
+          onChange={(e) => setPlayer2Input(e.target.value)}
+        />
+        <Button
+          type="primary"
+          shape="round"
+          icon={<PlayCircleOutlined />}
+          loading={isWeb3Loading}
+          disabled={!canPlay}
+          onClick={handlePlay}
+        >
+          Play Dice
+        </Button>
       </div>
+      <GameResult />
+      <Subgraph />
     </div>
   );
 }

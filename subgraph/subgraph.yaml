@@ -8,7 +8,7 @@ dataSources:
     source:
       address: "0x914979525b2E8Cb04c0085D1604c9A75290B4477"
       abi: PlayDice
-      startBlock: 8474845
+      startBlock: 8514526
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
