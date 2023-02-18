@@ -1,0 +1,8 @@
+type Game @entity(immutable: true) {
+  id: Bytes!
+  win: Bytes! # address
+  loss: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
