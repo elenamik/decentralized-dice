@@ -102,7 +102,7 @@ export default function Home() {
           addonBefore="Opponent"
           value={player2Input}
           onChange={(e) => setPlayer2Input(e.target.value)}
-          placeholder="Paster your opponent's address"
+          placeholder="Paste your opponent's address"
         />
         <Button
           type="primary"
