@@ -26,7 +26,11 @@ const GET_GAMES_GQL = `
   }
 `;
 
-export const Subgraph: React.FC = () => {
+export const truncateAddress = (address: string) => {
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+};
+
+export const RecentGames: React.FC = () => {
   const { data, isLoading, refetch } = useQuery<{
     data: {
       games: Game[];
@@ -55,42 +59,48 @@ export const Subgraph: React.FC = () => {
       const date = new Date(parseInt(game.blockTimestamp) * 1000);
       return {
         key: game.id,
-        win: game.win,
-        loss: game.loss,
+        win: truncateAddress(game.win),
+        loss: truncateAddress(game.loss),
         timestamp: date.toLocaleString(),
         number: game.blockNumber,
       };
     });
   };
-  const rows = makeRows(data?.data.games);
 
   const columns = [
-    {
-      title: "Block Number",
-      dataIndex: "number",
-      key: "number",
-    },
     {
       title: "Timestamp",
       dataIndex: "timestamp",
       key: "timestamp",
+      width: 20,
     },
+    {
+      title: "Block Number",
+      dataIndex: "number",
+      key: "number",
+      width: 10,
+    },
+
     {
       title: "Win",
       dataIndex: "win",
       key: "win",
+      width: 10,
     },
     {
       title: "Loss",
       dataIndex: "loss",
       key: "loss",
+      width: 10,
     },
   ];
+
+  const rows = makeRows(data?.data.games);
 
   return (
     <div>
       <Typography.Title level={3}>
-        Subgraph Data
+        Recent Games
         {isLoading && <Spin />}
         <Button
           disabled={isLoading}
@@ -107,4 +117,4 @@ export const Subgraph: React.FC = () => {
   );
 };
 
-export default Subgraph;
+export default RecentGames;

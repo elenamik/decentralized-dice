@@ -7,7 +7,7 @@ import { diceGame } from "../constants/game";
 import PlayDiceABI from "../contracts/PlayDiceABI.json";
 import { Game } from "../types/game";
 import { useMutation } from "react-query";
-import Subgraph from "../components/Subgraph";
+import RecentGames from "../components/RecentGames";
 import { PlayCircleOutlined } from "@ant-design/icons";
 
 export default function Home() {
@@ -114,7 +114,7 @@ export default function Home() {
         </Button>
       </div>
       <GameResult />
-      <Subgraph />
+      <RecentGames />
     </div>
   );
 }
