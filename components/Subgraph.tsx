@@ -1,18 +1,20 @@
+import { ReloadOutlined } from "@ant-design/icons";
+import { Button, Spin, Table, Typography } from "antd";
+import React, { useEffect } from "react";
+import { Game } from "types/game";
 import { useBlockNumber } from "wagmi";
-import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
 import { useQuery } from "react-query";
-import { Spin, Table, Typography } from "antd";
-import React from "react";
+import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
 
-const APIURL =
+const GRAPH_API_URL =
   "https://api.studio.thegraph.com/query/42265/decentralized-dice-2/0.0.2";
 
-const client = new ApolloClient({
-  uri: APIURL,
+const graphQLClient = new ApolloClient({
+  uri: GRAPH_API_URL,
   cache: new InMemoryCache(),
 });
 
-const GET_GAMES = `
+const GET_GAMES_GQL = `
   query getGames  {
     games (first:100, orderBy: blockNumber, orderDirection: desc) {
       id
@@ -24,32 +26,28 @@ const GET_GAMES = `
   }
 `;
 
-export type Game = {
-  __typename: string;
-  id: string;
-  win: string;
-  loss: string;
-  blockTimestamp: string;
-  blockNumber: string;
-};
-
 export const Subgraph: React.FC = () => {
-  const { data, isLoading, refetch, error } = useQuery<{
+  const { data, isLoading, refetch } = useQuery<{
     data: {
       games: Game[];
     };
   }>("games", {
+    onError: (error) => console.log(error),
     queryFn: () =>
-      client.query({
+      graphQLClient.query({
         query: gql`
-          ${GET_GAMES}
+          ${GET_GAMES_GQL}
         `,
       }),
   });
+  const { blocknumber } = useBlockNumber({
+    watch: true,
+  });
 
-  if (error) console.log("graph error", error);
-
-  useBlockNumber({ watch: true, onBlock: () => refetch() });
+  useEffect(() => {
+    console.log("refetching");
+    refetch();
+  }, [blocknumber]);
 
   const makeRows = (data: Game[]) => {
     if (!data || data.length === 0) return [];
@@ -92,7 +90,16 @@ export const Subgraph: React.FC = () => {
   return (
     <div>
       <Typography.Title level={3}>
-        Subgraph Data {isLoading && <Spin />}
+        Subgraph Data
+        {isLoading && <Spin />}
+        <Button
+          disabled={isLoading}
+          onClick={() => {
+            console.log("refetching");
+            refetch();
+          }}
+          icon={<ReloadOutlined />}
+        ></Button>
       </Typography.Title>
 
       <Table dataSource={rows} columns={columns} />
