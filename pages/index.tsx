@@ -1,7 +1,6 @@
-import { Alert, Button, Input, Popover, Tooltip, Typography } from "antd";
+import { Alert, Button, Input, Popover, Typography } from "antd";
 import React, { useEffect } from "react";
 import { useAccount, useContract, useContractEvent, useSigner } from "wagmi";
-import { useWeb3LoadingContext } from "../src/contexts/web3Loading";
 import { DICE_GAME } from "../src/constants";
 import PlayDiceABI from "../subgraph/abis/PlayDice.json";
 import { useMutation } from "react-query";
@@ -12,7 +11,8 @@ import { ethers } from "ethers";
 
 export default function Home() {
   // app context
-  const { isWeb3Loading, setIsWeb3Loading } = useWeb3LoadingContext(); // loading state for block updates
+  const [isWaitingForBlock, setIsWaitingForBlock] =
+    React.useState<boolean>(false);
   const { isConnected, address } = useAccount();
   const { data: signer } = useSigner();
 
@@ -32,7 +32,7 @@ export default function Home() {
       console.log("Game event", win, loss);
       // filter only for your game result
       if (win === address || loss === address) {
-        setIsWeb3Loading(false);
+        setIsWaitingForBlock(false);
         setGameResult(win);
       }
     },
@@ -53,7 +53,7 @@ export default function Home() {
     },
     onSuccess: (data) => {
       console.log("Success", data);
-      setIsWeb3Loading(true);
+      setIsWaitingForBlock(true);
       setGameResult(undefined);
     },
     onError: (error) => {
@@ -66,9 +66,9 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (isConnected && !isWeb3Loading) setCanPlay(true);
+    if (isConnected && !isWaitingForBlock) setCanPlay(true);
     else setCanPlay(false);
-  }, [isConnected, isWeb3Loading]);
+  }, [isConnected, isWaitingForBlock]);
 
   const GameResult = () => {
     if (gameResult === undefined) return null;

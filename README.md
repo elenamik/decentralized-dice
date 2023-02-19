@@ -10,6 +10,9 @@ with the walkthrough, you can check out the `start-here` branch and continue to 
 - connect your wallet, paste in another ETH address, and you should be enabled to roll the dice
 - if following the tutorial, hop back to follow along deploying the smart contract and subgraph.
 
+## Frontend Code
+- You can find the majority of the app code in `pages/index.tsx`
+
 ## Deploying graph
 1. install graph-cli globally, open project in subgraph studio, `graph-auth` with your project token
 2. `cd subgraph`

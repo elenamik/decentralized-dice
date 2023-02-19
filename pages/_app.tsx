@@ -10,11 +10,6 @@ import {
   getDefaultClient,
 } from "connectkit";
 
-import {
-  useWeb3LoadingContext,
-  Web3LoadingProvider,
-} from "../src/contexts/web3Loading";
-
 const queryClient = new QueryClient();
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -28,8 +23,6 @@ export default function App({ Component, pageProps }: AppProps) {
       chains,
     })
   );
-
-  const { isWeb3Loading } = useWeb3LoadingContext();
 
   return (
     <>
@@ -49,12 +42,10 @@ export default function App({ Component, pageProps }: AppProps) {
       <main>
         <QueryClientProvider client={queryClient}>
           <WagmiConfig client={client}>
-            <Web3LoadingProvider value={{ isWeb3Loading }}>
-              <ConnectKitProvider>
-                <ConnectKitButton />
-                <Component {...pageProps} />
-              </ConnectKitProvider>
-            </Web3LoadingProvider>
+            <ConnectKitProvider>
+              <ConnectKitButton />
+              <Component {...pageProps} />
+            </ConnectKitProvider>
           </WagmiConfig>
         </QueryClientProvider>
       </main>
