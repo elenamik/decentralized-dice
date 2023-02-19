@@ -15,8 +15,9 @@ import {
   Web3LoadingProvider,
 } from "../src/contexts/web3Loading";
 
+const queryClient = new QueryClient();
+
 export default function App({ Component, pageProps }: AppProps) {
-  const queryClient = new QueryClient();
   const chains = [goerli];
   const { provider } = configureChains(chains, [publicProvider()]);
 

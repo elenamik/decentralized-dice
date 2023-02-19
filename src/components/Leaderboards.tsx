@@ -17,6 +17,7 @@ const GET_WINNERS_GQL = `
 `;
 
 export const Leaderboards: React.FC = () => {
+  // for data refreshing
   const { data: blockNumber } = useBlockNumber({
     watch: true,
   });
@@ -27,9 +28,10 @@ export const Leaderboards: React.FC = () => {
     };
   }>({
     onError: (error) => console.log(error),
-    queryKey: ["players", blockNumber],
+    queryKey: ["players", blockNumber], // re-queries on each block update
     queryFn: () =>
       graphQLClient.query({
+        fetchPolicy: "no-cache",
         query: gql`
           ${GET_WINNERS_GQL}
         `,

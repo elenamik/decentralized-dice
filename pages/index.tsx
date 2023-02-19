@@ -1,7 +1,6 @@
-import { Alert, Button, Input, Typography } from "antd";
+import { Alert, Button, Input, Popover, Tooltip, Typography } from "antd";
 import React, { useEffect } from "react";
 import { useAccount, useContract, useContractEvent, useSigner } from "wagmi";
-
 import { useWeb3LoadingContext } from "../src/contexts/web3Loading";
 import { DICE_GAME } from "../src/constants";
 import PlayDiceABI from "../subgraph/abis/PlayDice.json";
@@ -9,6 +8,7 @@ import { useMutation } from "react-query";
 import RecentGames from "../src/components/RecentGames";
 import { PlayCircleOutlined } from "@ant-design/icons";
 import Leaderboards from "../src/components/Leaderboards";
+import { ethers } from "ethers";
 
 export default function Home() {
   // app context
@@ -103,20 +103,31 @@ export default function Home() {
     <div className="">
       <Typography.Title level={1}>Decentralized Dice 🎲</Typography.Title>
       <div className="flex flex-row">
-        <Input
-          style={{ width: "40%" }}
-          disabled={!canPlay}
-          addonBefore="Opponent"
-          value={opponentInput}
-          onChange={(e) => setOpponentInput(e.target.value)}
-          placeholder="Paste your opponent's address"
-        />
+        <Popover
+          content="Please put in valid ETH address"
+          title="Address invalid"
+          open={!ethers.utils.isAddress(opponentInput)}
+        >
+          <Input
+            style={{ width: "40%" }}
+            disabled={!canPlay}
+            addonBefore="Opponent"
+            value={opponentInput}
+            onChange={(e) => setOpponentInput(e.target.value)}
+            placeholder="Paste your opponent's address"
+          />
+        </Popover>
+
         <Button
           type="primary"
           shape="round"
           icon={<PlayCircleOutlined />}
           loading={isWeb3Loading}
-          disabled={!canPlay || opponentInput === ""}
+          disabled={
+            !canPlay ||
+            opponentInput === "" ||
+            !ethers.utils.isAddress(opponentInput)
+          }
           onClick={handlePlay}
         >
           Play Dice
