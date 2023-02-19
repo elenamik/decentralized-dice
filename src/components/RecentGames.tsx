@@ -1,5 +1,5 @@
 import { Spin, Table, Typography } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 import { Game } from "../types";
 import { useBlockNumber } from "wagmi";
 import { useQuery } from "react-query";
@@ -20,18 +20,21 @@ const GET_GAMES_GQL = `
 `;
 
 export const RecentGames: React.FC = () => {
+  // for data refreshing
   const { data: blockNumber } = useBlockNumber({
     watch: true,
   });
+
   const { data, isLoading } = useQuery<{
     data: {
       games: Game[];
     };
   }>({
     onError: (error) => console.log(error),
-    queryKey: ["games", blockNumber],
-    queryFn: () => {
+    queryKey: ["games", blockNumber], // re-queries on each block update
+    queryFn: async () => {
       return graphQLClient.query({
+        fetchPolicy: "no-cache",
         query: gql`
           ${GET_GAMES_GQL}
         `,
