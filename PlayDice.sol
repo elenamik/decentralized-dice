@@ -7,9 +7,11 @@ pragma solidity >=0.8.2 <0.9.0;
 contract PlayDice {
     uint randSeed = 0;
 
-    event Game(address win, address loss);
+    event Game(address win, address loss, uint value);
 
-    function playDice(address player2) public {
+    function playDice(address player2, uint value) public {
+        // with actual ETH, function would be defined as "payable", and we could use msg.value
+
         uint result = randomOutome();
 
         address win;
@@ -23,7 +25,9 @@ contract PlayDice {
             win = player2;
             loss = msg.sender;
         }
-        emit Game(win, loss);
+
+        // with real ETH, could send funds to the winner
+        emit Game(win, loss, value);
     }
 
     // returns 0 or 1, and generates new seed
