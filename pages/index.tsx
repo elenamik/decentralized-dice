@@ -134,8 +134,6 @@ export default function Home() {
         </Button>
       </div>
       <GameResult />
-      <RecentGames />
-      <Leaderboards />
     </div>
   );
 }
