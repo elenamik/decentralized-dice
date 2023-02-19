@@ -5,22 +5,27 @@ import { useAccount, useContract, useContractEvent, useSigner } from "wagmi";
 import { useWeb3LoadingContext } from "../contexts/web3Loading";
 import { diceGame } from "../constants/game";
 import PlayDiceABI from "../contracts/PlayDiceABI.json";
-import { Game } from "../types/game";
 import { useMutation } from "react-query";
 import RecentGames from "../components/RecentGames";
 import { PlayCircleOutlined } from "@ant-design/icons";
 import Leaderboards from "../components/Leaderboards";
 
 export default function Home() {
+  // app context
   const { isWeb3Loading, setIsWeb3Loading } = useWeb3LoadingContext();
   const { isConnected, address } = useAccount();
   const { data: signer } = useSigner();
+
+  // inputs
   const [player2Input, setPlayer2Input] = React.useState<string>(
     "0xF207a7340103fd098908bc74Eb8174D745BAA3a6"
   ); // hardcoded to one of my test accounts
-  const [gameResult, setGameResult] = React.useState<string | undefined>();
-  const [canPlay, setCanPlay] = React.useState(false);
 
+  // game state
+  const [canPlay, setCanPlay] = React.useState(false);
+  const [gameResult, setGameResult] = React.useState<string | undefined>();
+
+  // listens for events emittted by the contract to update UI
   useContractEvent({
     address: diceGame.address,
     abi: PlayDiceABI,
@@ -35,12 +40,14 @@ export default function Home() {
     },
   });
 
+  // connects to contract
   const diceContract = useContract({
     address: diceGame.address,
     abi: PlayDiceABI,
     signerOrProvider: signer,
   });
 
+  // handles play submit
   const { mutate } = useMutation({
     mutationKey: `move${Date.now()}`,
     mutationFn: (args: { player2: string }) => {
