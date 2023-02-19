@@ -13,7 +13,7 @@ import {
 import {
   useWeb3LoadingContext,
   Web3LoadingProvider,
-} from "../contexts/web3Loading";
+} from "../src/contexts/web3Loading";
 
 export default function App({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();

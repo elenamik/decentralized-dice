@@ -2,13 +2,13 @@ import { Alert, Button, Input, Typography } from "antd";
 import React, { useEffect } from "react";
 import { useAccount, useContract, useContractEvent, useSigner } from "wagmi";
 
-import { useWeb3LoadingContext } from "../contexts/web3Loading";
-import { diceGame } from "../constants/game";
+import { useWeb3LoadingContext } from "../src/contexts/web3Loading";
+import { diceGame } from "../src/constants";
 import PlayDiceABI from "../subgraph/abis/PlayDice.json";
 import { useMutation } from "react-query";
-import RecentGames from "../components/RecentGames";
+import RecentGames from "../src/components/RecentGames";
 import { PlayCircleOutlined } from "@ant-design/icons";
-import Leaderboards from "../components/Leaderboards";
+import Leaderboards from "../src/components/Leaderboards";
 
 export default function Home() {
   // app context
