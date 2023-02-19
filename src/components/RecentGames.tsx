@@ -1,11 +1,11 @@
 import { Spin, Table, Typography } from "antd";
 import React from "react";
-import { Game } from "../types/game";
+import { Game } from "../types";
 import { useBlockNumber } from "wagmi";
 import { useQuery } from "react-query";
 import { gql } from "@apollo/client";
-import { graphQLClient } from "../constants/graph";
-import { truncateAddress } from "../utils";
+import { graphQLClient } from "../graph";
+import { truncateAddress } from "../../utils";
 
 const GET_GAMES_GQL = `
   query getGames  {

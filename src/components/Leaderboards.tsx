@@ -3,8 +3,8 @@ import React from "react";
 import { useBlockNumber } from "wagmi";
 import { useQuery } from "react-query";
 import { gql } from "@apollo/client";
-import { graphQLClient } from "../constants/graph";
-import { Player } from "../types/player";
+import { graphQLClient } from "../graph";
+import { Player } from "../types";
 
 const GET_WINNERS_GQL = `
   query getWinners  {
