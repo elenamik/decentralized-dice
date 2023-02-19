@@ -1,7 +1,6 @@
 import { Alert, Button, Input, Typography } from "antd";
 import React, { useEffect } from "react";
 import { useAccount, useContract, useContractEvent, useSigner } from "wagmi";
-
 import { useWeb3LoadingContext } from "../src/contexts/web3Loading";
 import { DICE_GAME } from "../src/constants";
 import PlayDiceABI from "../subgraph/abis/PlayDice.json";
