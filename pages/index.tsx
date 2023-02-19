@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useAccount, useContract, useContractEvent, useSigner } from "wagmi";
 
 import { useWeb3LoadingContext } from "../src/contexts/web3Loading";
-import { diceGame } from "../src/constants";
+import { DICE_GAME } from "../src/constants";
 import PlayDiceABI from "../subgraph/abis/PlayDice.json";
 import { useMutation } from "react-query";
 import RecentGames from "../src/components/RecentGames";
@@ -25,7 +25,7 @@ export default function Home() {
 
   // listens for events emittted by the contract to update UI
   useContractEvent({
-    address: diceGame.address,
+    address: DICE_GAME.address,
     abi: PlayDiceABI,
     eventName: "Game",
     listener(win: string, loss: string) {
@@ -40,7 +40,7 @@ export default function Home() {
 
   // code to interact with contract
   const diceContract = useContract({
-    address: diceGame.address,
+    address: DICE_GAME.address,
     abi: PlayDiceABI,
     signerOrProvider: signer,
   });
