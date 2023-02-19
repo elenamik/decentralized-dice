@@ -1,32 +1,35 @@
-import { Alert, Button, Input } from "antd";
+import { Alert, Button, Input, Typography } from "antd";
 import React, { useEffect } from "react";
 import { useAccount, useContract, useContractEvent, useSigner } from "wagmi";
 
 import { useWeb3LoadingContext } from "../contexts/web3Loading";
 import { diceGame } from "../constants/game";
-import PlayDiceABI from "../contracts/PlayDiceABI.json";
-import { Game } from "../types/game";
+import PlayDiceABI from "../subgraph/abis/PlayDice.json";
 import { useMutation } from "react-query";
 import RecentGames from "../components/RecentGames";
 import { PlayCircleOutlined } from "@ant-design/icons";
 import Leaderboards from "../components/Leaderboards";
 
 export default function Home() {
-  const { isWeb3Loading, setIsWeb3Loading } = useWeb3LoadingContext();
+  // app context
+  const { isWeb3Loading, setIsWeb3Loading } = useWeb3LoadingContext(); // loading state for block updates
   const { isConnected, address } = useAccount();
   const { data: signer } = useSigner();
-  const [player2Input, setPlayer2Input] = React.useState<string>(
+
+  // game state
+  const [opponentInput, setOpponentInput] = React.useState<string>(
     "0xF207a7340103fd098908bc74Eb8174D745BAA3a6"
   ); // hardcoded to one of my test accounts
   const [gameResult, setGameResult] = React.useState<string | undefined>();
   const [canPlay, setCanPlay] = React.useState(false);
 
+  // listens for events emittted by the contract to update UI
   useContractEvent({
     address: diceGame.address,
     abi: PlayDiceABI,
     eventName: "Game",
-    // @ts-ignore
     listener(win: string, loss: string) {
+      console.log("Game event", win, loss);
       // filter only for your game result
       if (win === address || loss === address) {
         setIsWeb3Loading(false);
@@ -35,16 +38,18 @@ export default function Home() {
     },
   });
 
+  // code to interact with contract
   const diceContract = useContract({
     address: diceGame.address,
     abi: PlayDiceABI,
     signerOrProvider: signer,
   });
 
+  // handles play submit
   const { mutate } = useMutation({
     mutationKey: `move${Date.now()}`,
-    mutationFn: (args: { player2: string }) => {
-      return diceContract!.playDice(args.player2);
+    mutationFn: (args: { opponent: string }) => {
+      return diceContract!.playDice(args.opponent);
     },
     onSuccess: (data) => {
       console.log("Success", data);
@@ -57,7 +62,7 @@ export default function Home() {
   });
 
   const handlePlay = () => {
-    mutate({ player2: player2Input });
+    mutate({ opponent: opponentInput });
   };
 
   useEffect(() => {
@@ -71,10 +76,11 @@ export default function Home() {
       return (
         <Alert
           message="You won!"
-          description={`Congrats, you beat ${player2Input}`}
+          description={`Congrats, you beat ${opponentInput}`}
           type="success"
           showIcon
           closable
+          style={{ width: "80%" }}
           onClose={() => setGameResult(undefined)}
         />
       );
@@ -82,7 +88,7 @@ export default function Home() {
       return (
         <Alert
           message="You lost!"
-          style={{ width: "40%" }}
+          style={{ width: "80%" }}
           description={`Sorry, ${gameResult} won`}
           type="error"
           showIcon
@@ -95,13 +101,14 @@ export default function Home() {
 
   return (
     <div className="">
+      <Typography.Title level={1}>Decentralized Dice 🎲</Typography.Title>
       <div className="flex flex-row">
         <Input
           style={{ width: "40%" }}
           disabled={!canPlay}
           addonBefore="Opponent"
-          value={player2Input}
-          onChange={(e) => setPlayer2Input(e.target.value)}
+          value={opponentInput}
+          onChange={(e) => setOpponentInput(e.target.value)}
           placeholder="Paste your opponent's address"
         />
         <Button
@@ -109,7 +116,7 @@ export default function Home() {
           shape="round"
           icon={<PlayCircleOutlined />}
           loading={isWeb3Loading}
-          disabled={!canPlay}
+          disabled={!canPlay || opponentInput === ""}
           onClick={handlePlay}
         >
           Play Dice
