@@ -5,10 +5,13 @@ type Game @entity(immutable: true) {
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
+  value: BigInt! # uint256
 }
 
 type Player @entity(immutable: false) {
   id: Bytes! # player's eth address
   wins: Int!
   losses: Int!
+  winValue: BigInt!
+  lossValue: BigInt!
 }

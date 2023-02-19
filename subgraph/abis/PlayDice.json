@@ -13,6 +13,12 @@
         "internalType": "address",
         "name": "loss",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
       }
     ],
     "name": "Game",
@@ -20,7 +26,16 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "player2", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "player2",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      }
     ],
     "name": "playDice",
     "outputs": [],

@@ -1,12 +1,14 @@
 import { Game as GameEvent } from "../generated/PlayDice/PlayDice";
 import { Game, Player } from "../generated/schema";
-import { Bytes } from "@graphprotocol/graph-ts";
+import { BigInt, Bytes } from "@graphprotocol/graph-ts";
 
-const updatePlayer = (player: Player, win: boolean): void => {
+const updatePlayer = (player: Player, win: boolean, value: BigInt): void => {
   if (win) {
     player.wins = player.wins + 1;
+    player.winValue = player.winValue.plus(value);
   } else {
     player.losses = player.losses + 1;
+    player.lossValue = player.lossValue.plus(value);
   }
   player.save();
 };
@@ -16,6 +18,8 @@ const newPlayer = (id: Bytes): Player => {
   const player = new Player(id);
   player.wins = 0;
   player.losses = 0;
+  player.winValue = BigInt.fromString("0");
+  player.lossValue = BigInt.fromString("0");
   return player;
 };
 
@@ -34,12 +38,12 @@ export function handleGame(event: GameEvent): void {
   if (winner == null) {
     winner = newPlayer(winnerId);
   }
-  updatePlayer(winner, true);
+  updatePlayer(winner, true, event.params.value);
 
   const loserId = event.params.loss;
   let loser = Player.load(loserId);
   if (loser == null) {
     loser = newPlayer(loserId);
   }
-  updatePlayer(loser, false);
+  updatePlayer(loser, false, event.params.value);
 }
