@@ -122,7 +122,7 @@ export default function Home() {
           type="primary"
           shape="round"
           icon={<PlayCircleOutlined />}
-          loading={isWeb3Loading}
+          loading={isWaitingForBlock}
           disabled={
             !canPlay ||
             opponentInput === "" ||
