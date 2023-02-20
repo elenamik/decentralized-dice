@@ -20,4 +20,4 @@ Full working version is live at [decentralized-dice.vercel.app](https://decentra
 2. `cd subgraph`
 3. `graph codegen` -> creates `generated` folder with generated AssemblyScript types
 4. `graph build` -> creates `build` folder with compiled subgraph in WebAssembly
-5. `graph deploy decentalized-dice(or your proj here)` + specify version -> check it reflects in subgraph studion
+5. `graph deploy decentalized-dice(or your proj here)` + specify version -> check it reflects in subgraph studio
