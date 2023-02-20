@@ -6,12 +6,12 @@ dataSources:
     name: PlayDice
     network: goerli
     source:
-      address: "0x3042bEB5014F1a14482f67E6e1A53e89333A351C"
+      address: "0x8c0eDbeC6AcD2E6D08F11F0388A1BC687f41ef98"
       abi: PlayDice
-      startBlock: 8521038
+      startBlock: 8527356
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.7
+      apiVersion: 0.0.1
       language: wasm/assemblyscript
       entities:
         - Game

@@ -6,9 +6,3 @@ type Game @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
-
-type Player @entity(immutable: false) {
-  id: Bytes! # player's eth address
-  wins: Int!
-  losses: Int!
-}
