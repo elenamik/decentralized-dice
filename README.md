@@ -6,7 +6,7 @@ Full working version is live at [decentralized-dice.vercel.app](https://decentra
 
 ## Getting Started
 - run `npm install` or `yarn install` to install dependencies
-- copy `.env.sample` and rename to `.env.local`
+- copy `.env.sample` and rename to `.env.local` (add your own contract address and subgraph URL, follow along [here](https://mikleens.hashnode.dev/how-to-use-the-graph-protocol-for-decentralized-gaming) on how to do that)
 - run `npm run dev` or `yarn dev` to start the development server
 - open up `localhost:3000` in your browser, you should see an input field, and a button to connect your wallet
 - connect your wallet, paste in another ETH address, and you should be enabled to roll the dice
@@ -14,6 +14,8 @@ Full working version is live at [decentralized-dice.vercel.app](https://decentra
 
 ## Frontend Code
 - You can find the majority of the app code in `pages/index.tsx`
+- The UI uses ConnectKit + wagmi to web3 enable the app and interact with the smart contract
+- There are additional components in `src/components` folder, which are used to query and display data from subgraph (the walkthrough will cover using these)
 
 ## Deploying graph
 1. install graph-cli globally, open project in subgraph studio, `graph-auth` with your project token
