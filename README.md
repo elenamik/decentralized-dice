@@ -1,6 +1,8 @@
 # 🎲🎲🎲 Decentralized Dice 🎲🎲🎲
-The complete result is in the `main` branch, but if you wish to follow along,
-with the walkthrough, you can check out the `start-here` branch and continue to the below steps.
+A tutorial on how to build this project can be found [here](https://mikleens.hashnode.dev/how-to-use-the-graph-protocol-for-decentralized-gaming).
+If you are following along, **run `git checkout start-here`** and continue to the below steps.
+
+Full working version is live at [decentralized-dice.vercel.app](https://decentralized-dice.vercel.app/).
 
 ## Getting Started
 - run `npm install` or `yarn install` to install dependencies
